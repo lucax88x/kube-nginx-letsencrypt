@@ -9,8 +9,12 @@ fi
 NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
 
 cd $HOME
-python -m SimpleHTTPServer 80 
+
+echo "Listen python"
+python -m SimpleHTTPServer 80 &
 sleep 60
+
+echo "End sleep starting certbot"
 PID=$!
 certbot certonly --webroot -w $HOME -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS}
 kill $PID
@@ -28,16 +32,5 @@ cat /secret-patch-template.json | \
 
 ls /secret-patch.json || exit 1
 
-# update secret
+echo  "update secret"
 curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/secret-patch.json https://kubernetes.default/api/v1/namespaces/${NAMESPACE}/secrets/${SECRET}
-
-# cat /deployment-patch-template.json | \
-# 	sed "s/TLSUPDATED/$(date)/" | \
-# 	sed "s/NAMESPACE/${NAMESPACE}/" | \
-# 	sed "s/NAME/${DEPLOYMENT}/" \
-# 	> /deployment-patch.json
-
-# ls /deployment-patch.json || exit 1
-
-# # update pod spec on ingress deployment to trigger redeploy
-# curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/deployment-patch.json https://kubernetes.default/apis/extensions/v1beta1/namespaces/${NAMESPACE}/deployments/${DEPLOYMENT}
