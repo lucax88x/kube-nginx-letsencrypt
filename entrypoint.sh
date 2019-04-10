@@ -16,7 +16,17 @@ sleep 60
 
 echo "End sleep starting certbot"
 PID=$!
-certbot certonly --webroot -w $HOME -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS}
+
+if [ $STAGING ]; then
+	if [ $STAGING = true ]; then
+		certbot certonly --webroot -w $HOME -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} --dry-run
+	else
+		certbot certonly --webroot -w $HOME -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS}
+	fi
+else
+	certbot certonly --webroot -w $HOME -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS}
+fi
+
 kill $PID
 
 CERTPATH=/etc/letsencrypt/live/$(echo $DOMAINS | cut -f1 -d',')
