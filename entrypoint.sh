@@ -53,7 +53,8 @@ case $CODE in
 	;;
 404)
 	echo "Secret doesn't exist"
-	createSecret
+	echo "Create secret ${SECRET}"
+	curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPOST  -H "Accept: application/json, */*" -H "Content-Type: application/json" -d @/secret-patch.json https://kubernetes.default/api/v1/namespaces/${NAMESPACE}/secrets/${SECRET}`
 	;;
 *)
 	echo "Unknown Error:"
@@ -61,9 +62,3 @@ case $CODE in
 	exit 1
 	;;
 esac
-
-function createSecret() {
-	echo "Create secret ${SECRET}"
-
-	curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPOST  -H "Accept: application/json, */*" -H "Content-Type: application/json" -d @/secret-patch.json https://kubernetes.default/api/v1/namespaces/${NAMESPACE}/secrets/${SECRET}`
-}
