@@ -29,6 +29,9 @@ fi
 
 kill $PID
 
+echo `ls -al /etc/letsencrypt`
+echo '\n\n\n'
+echo `ls -al /etc/letsencrypt/live`
 CERTPATH=/etc/letsencrypt/live/$(echo $DOMAINS | cut -f1 -d',')
 
 ls $CERTPATH || exit 1
