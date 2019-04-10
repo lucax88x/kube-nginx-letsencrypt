@@ -29,9 +29,6 @@ fi
 
 kill $PID
 
-echo `ls -al /etc/letsencrypt`
-echo '\n\n\n'
-echo `ls -al /etc/letsencrypt/live`
 CERTPATH=/etc/letsencrypt/live/$(echo $DOMAINS | cut -f1 -d',')
 
 ls $CERTPATH || exit 1
@@ -47,4 +44,4 @@ ls /secret-patch.json || exit 1
 
 echo  "update secret"
 RESP=`curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/secret-patch.json https://kubernetes.default/api/v1/namespaces/${NAMESPACE}/secrets/${SECRET}`
-echo RESP
+echo $RESP
