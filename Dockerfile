@@ -1,7 +1,11 @@
-FROM fedora:24
+FROM centos:7
 
-RUN dnf install jq certbot -y && dnf clean all
-RUN mkdir /etc/letsencrypt
+RUN yum -y install yum-utils
+RUN yum install -y epel-release
+RUN yum install jq -y
+RUN yum install -y certbot
+
+RUN mkdir -p /etc/letsencrypt
 
 CMD ["/entrypoint.sh"]
 

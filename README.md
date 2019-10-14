@@ -1,5 +1,6 @@
 # kube-nginx-letsencrypt
 
-Obtain and install Let's Encrypt certificates for Kubernetes Ingresses
-
-https://hub.docker.com/r/sjenning/kube-nginx-letsencrypt/
+```
+docker build -f ./Dockerfile -t lucax88x/kube-nginx-letsencrypt .
+docker push lucax88x/kube-nginx-letsencrypt
+```

@@ -42,7 +42,7 @@ cat /secret-patch-template.json | \
 
 ls /secret-patch.json || exit 1
 
-echo  "update secret"
+echo "Try to create secret"
 RESP=`curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/secret-patch.json https://kubernetes.default/api/v1/namespaces/${NAMESPACE}/secrets/${SECRET}`
 CODE=`echo $RESP | jq -r '.code'`
 
@@ -59,8 +59,9 @@ case $CODE in
 	# echo "Create secret ${SECRET}"
 	;;
 *)
-	echo "Unknown Error:"
+	echo "Possibly an error"
 	echo $RESP
-	exit 1
 	;;
 esac
+
+exit 0
